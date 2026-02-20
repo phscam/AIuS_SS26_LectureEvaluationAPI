@@ -1,0 +1,6 @@
+@LectureEvaluationAPI_HostAddress = http://localhost:5283
+
+GET {{LectureEvaluationAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

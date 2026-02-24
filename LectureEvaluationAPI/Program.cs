@@ -11,6 +11,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
 builder.Services.AddSingleton<ILectureRepository, MockLectureRepository>();
+builder.Services.AddSingleton<IEvaluationRepository, MockEvaluationRepository>();
 
 var app = builder.Build();
 

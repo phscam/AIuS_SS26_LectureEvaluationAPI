@@ -8,19 +8,13 @@ namespace LectureEvaluationAPI.Api.Controller;
 [Route("api/lectures")]
 public class LectureController : ControllerBase
 {
-    private readonly Lecture _lecture = new Lecture()
-    {
-        Id = 1,
-        Title = "Anwendungsintegration und Sicherheit",
-        LecturerName = "Valmir & Philipp",
-        ExternalId = "FHV AIuS SS 2026"
-    };
-    
     private readonly ILectureRepository _lectureRepository;
+    private readonly IEvaluationRepository _evaluationRepository;
 
-    public LectureController(ILectureRepository lectureRepository)
+    public LectureController(ILectureRepository lectureRepository, IEvaluationRepository evaluationRepository)
     {
         _lectureRepository = lectureRepository;
+        _evaluationRepository = evaluationRepository;
     }
     
     [HttpGet]
@@ -39,7 +33,7 @@ public class LectureController : ControllerBase
     public async Task<ActionResult<Lecture>> GetById(int id)
     {
         var lecture = await _lectureRepository.FindByIdAsync(id);
-
+        
         if (lecture == null)
             return NotFound();
         
@@ -62,34 +56,46 @@ public class LectureController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Lecture> Update(int id, Lecture lecture)
+    public async Task<ActionResult<Lecture>> Update(int id, Lecture lecture)
     {
-        return Ok(_lecture);
+        var existingLecture = await _lectureRepository.FindByIdAsync(id);
+        
+        if (existingLecture == null)
+            return NotFound();
+        
+        var updatedLecture = await _lectureRepository.UpdateAsync(lecture);
+        
+        return Ok(updatedLecture);
     }
     
     
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Lecture> Delete(int id)
+    public async Task<ActionResult<Lecture>> Delete(int id)
     {
-        return Ok(_lecture);
+        var existingLecture = await _lectureRepository.FindByIdAsync(id);
+        
+        if (existingLecture == null)
+            return NotFound();
+
+        var deletedLecture = await _lectureRepository.DeleteAsync(existingLecture);
+        
+        return Ok(deletedLecture);
     }
     
     
     [HttpGet("{id}/evaluations")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Evaluation> GetEvaluationsByLectureId(int id)
+    public async Task<ActionResult<Evaluation>> GetEvaluationsByLectureId(int id)
     {
-        var evaluations = new List<Evaluation>()
-        {
-            new Evaluation()
-            {
-                Id = 1,
-                PositiveCritic = "Sehr nice"
-            }
-        };
+        var lecture = await _lectureRepository.FindByIdAsync(id);
+        
+        if (lecture == null)
+            return NotFound();
+        
+        var evaluations = await _evaluationRepository.FindAllByLectureIdAsync(id);
         
         return Ok(evaluations);
     }
@@ -99,8 +105,17 @@ public class LectureController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Evaluation> CreateEvaluationForLectureId(int id, Evaluation evaluation)
+    public async Task<ActionResult<Evaluation>> CreateEvaluationForLectureId(int id, Evaluation evaluation)
     {
-        return CreatedAtAction(nameof(EvaluationController.GetById), new { id = evaluation.Id }, evaluation);
+        var lecture = await _lectureRepository.FindByIdAsync(id);
+        
+        if (lecture == null)
+            return NotFound();
+        
+        evaluation.LectureId = id;
+        
+        var newEvaluation = await _evaluationRepository.AddAsync(evaluation);
+        
+        return CreatedAtAction(nameof(GetById), new { id = newEvaluation.Id }, newEvaluation);
     }
 }

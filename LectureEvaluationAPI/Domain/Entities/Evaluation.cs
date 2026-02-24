@@ -1,6 +1,6 @@
 namespace LectureEvaluationAPI.Domain.Entities;
 
-public class Evaluation
+public class Evaluation : IEntity
 {
     public int Id { get; set; }
     
@@ -10,4 +10,6 @@ public class Evaluation
 
     // Foreign Key linking back to the Lecture
     public Lecture? Lecture { get; set; }
+    
+    public int LectureId { get; set; }
 }

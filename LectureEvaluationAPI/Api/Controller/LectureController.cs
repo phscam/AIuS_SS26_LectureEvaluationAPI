@@ -1,3 +1,4 @@
+using LectureEvaluationAPI.Application.Repositories;
 using LectureEvaluationAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,11 +16,18 @@ public class LectureController : ControllerBase
         ExternalId = "FHV AIuS SS 2026"
     };
     
+    private readonly ILectureRepository _lectureRepository;
+
+    public LectureController(ILectureRepository lectureRepository)
+    {
+        _lectureRepository = lectureRepository;
+    }
+    
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<Lecture>> GetAll()
+    public async Task<ActionResult<IEnumerable<Lecture>>> GetAll()
     {
-        var lectures = new List<Lecture>() { _lecture };
+        var lectures = await _lectureRepository.FindAllAsync();
 
         return Ok(lectures);
     }

@@ -1,3 +1,5 @@
+using LectureEvaluationAPI.Application.Repositories;
+using LectureEvaluationAPI.Infrastructure.Repositories;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
+
+builder.Services.AddSingleton<ILectureRepository, MockLectureRepository>();
 
 var app = builder.Build();
 

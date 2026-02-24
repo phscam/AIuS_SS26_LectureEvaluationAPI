@@ -1,6 +1,6 @@
 namespace LectureEvaluationAPI.Domain.Entities;
 
-public class Lecture
+public class Lecture : IEntity
 {
     // Primary Key (Internal ID)
     public int Id { get; set; }

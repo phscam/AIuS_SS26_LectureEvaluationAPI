@@ -36,19 +36,23 @@ public class LectureController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Lecture> GetById(int id)
+    public async Task<ActionResult<Lecture>> GetById(int id)
     {
-        return Ok(_lecture);
+        var lecture = await _lectureRepository.FindByIdAsync(id);
+
+        if (lecture == null)
+            return NotFound();
+        
+        return Ok(lecture);
     }
     
     
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Lecture> Create(Lecture lecture)
+    public async Task<ActionResult<Lecture>> Create(Lecture lecture)
     {
-        var newLecture = _lecture;
+        var newLecture = await _lectureRepository.AddAsync(lecture);
         
         return CreatedAtAction(nameof(GetById), new { id = newLecture.Id }, newLecture);
     }

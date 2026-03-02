@@ -1,4 +1,6 @@
 using LectureEvaluationAPI.Application.Repositories;
+using LectureEvaluationAPI.Application.Services.LectureService;
+using LectureEvaluationAPI.Application.Services.LectureService.Dto;
 using LectureEvaluationAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +13,17 @@ public class LectureController : ControllerBase
     private readonly ILectureRepository _lectureRepository;
     private readonly IEvaluationRepository _evaluationRepository;
 
-    public LectureController(ILectureRepository lectureRepository, IEvaluationRepository evaluationRepository)
+    private readonly ILectureService _lectureService;
+
+    public LectureController(
+        ILectureRepository lectureRepository, 
+        IEvaluationRepository evaluationRepository,
+        ILectureService lectureService
+    )
     {
         _lectureRepository = lectureRepository;
         _evaluationRepository = evaluationRepository;
+        _lectureService = lectureService;
     }
     
     [HttpGet]
@@ -44,9 +53,9 @@ public class LectureController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Lecture>> Create(Lecture lecture)
+    public async Task<ActionResult<LectureResponse>> Create(CreateLectureRequest request)
     {
-        var newLecture = await _lectureRepository.AddAsync(lecture);
+        var newLecture = await _lectureService.CreateLectureAsync(request);
         
         return CreatedAtAction(nameof(GetById), new { id = newLecture.Id }, newLecture);
     }
@@ -56,14 +65,12 @@ public class LectureController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Lecture>> Update(int id, Lecture lecture)
+    public async Task<ActionResult<LectureResponse>> Update(int id, UpdateLectureRequest request)
     {
-        var existingLecture = await _lectureRepository.FindByIdAsync(id);
+        var updatedLecture = await _lectureService.UpdateAsync(id, request);
         
-        if (existingLecture == null)
+        if (updatedLecture == null)
             return NotFound();
-        
-        var updatedLecture = await _lectureRepository.UpdateAsync(lecture);
         
         return Ok(updatedLecture);
     }

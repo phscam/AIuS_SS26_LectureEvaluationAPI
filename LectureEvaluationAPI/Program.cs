@@ -1,4 +1,6 @@
+using LectureEvaluationAPI.Application.Mapper;
 using LectureEvaluationAPI.Application.Repositories;
+using LectureEvaluationAPI.Application.Services.LectureService;
 using LectureEvaluationAPI.Infrastructure.Repositories;
 using Scalar.AspNetCore;
 
@@ -12,6 +14,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddSingleton<ILectureRepository, MockLectureRepository>();
 builder.Services.AddSingleton<IEvaluationRepository, MockEvaluationRepository>();
+
+builder.Services.AddScoped<ILectureService, LectureService>();
+builder.Services.AddTransient<DtoMapper>();
 
 var app = builder.Build();
 

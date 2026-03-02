@@ -3,6 +3,10 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# docker my_sql data
+/LectureEvaluationAPI/docker/mysql_data
+
+
 # dotenv files
 .env
 

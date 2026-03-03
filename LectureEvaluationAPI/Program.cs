@@ -14,8 +14,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<ILectureRepository, MockLectureRepository>();
-builder.Services.AddSingleton<IEvaluationRepository, MockEvaluationRepository>();
+builder.Services.AddScoped<ILectureRepository, MySqlLectureRepository>();
+builder.Services.AddScoped<IEvaluationRepository, MySqlEvaluationRepository>();
 
 builder.Services.AddScoped<ILectureService, LectureService>();
 builder.Services.AddTransient<DtoMapper>();
@@ -23,7 +23,7 @@ builder.Services.AddTransient<DtoMapper>();
 var connectionString = builder.Configuration.GetConnectionString("mySqlDb");
 
 if (string.IsNullOrEmpty(connectionString))
-    throw new InvalidOperationException("Dababase connection string is missing");
+    throw new InvalidOperationException("Database connection string is missing");
 
 builder.Services.AddDbContext<MySqlDbContext>(options =>
     options.UseMySQL(connectionString)

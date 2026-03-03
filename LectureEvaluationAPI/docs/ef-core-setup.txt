@@ -1,0 +1,25 @@
+# Setup EF Core
+
+Install packages:
+- MySql.EntityFrameworkCore (10.0.1)
+- Microsoft.EntityFrameworkCore (10.0.3)
+- Microsoft.EntityFrameworkCore.Design (10.0.3)
+(- Microsoft.EntityFrameworkCore.Tools (10.0.3))
+
+Install ef tools (on project level - Terminal)
+- dotnet new tool-manifest
+- dotnet tool install dotnet-ef --version 10.0.3
+
+Code:
+- Create DbContext (DbSet for entities, constructor with options-builder)
+- Register DbContext in Programm.cs (with connection string)
+
+Migration (on project level):
+- dotnet ef migrations add InitialCreate
+- dotnet ef database update (requires running database)
+
+Database with Docker:
+- run "docker compose up" in the folder with the docker-compose.yml 
+  to start a database server
+
+

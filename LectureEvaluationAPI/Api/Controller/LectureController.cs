@@ -112,16 +112,12 @@ public class LectureController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Evaluation>> CreateEvaluationForLectureId(int id, Evaluation evaluation)
+    public async Task<ActionResult<EvaluationResponse>> CreateEvaluationForLectureId(int id, CreateEvaluationRequest evaluation)
     {
-        var lecture = await _lectureRepository.FindByIdAsync(id);
+        var newEvaluation = await _lectureService.CreateEvaluationForLectureId(id, evaluation);
         
-        if (lecture == null)
+        if (newEvaluation == null)
             return NotFound();
-        
-        evaluation.LectureId = id;
-        
-        var newEvaluation = await _evaluationRepository.AddAsync(evaluation);
         
         return CreatedAtAction(nameof(GetById), new { id = newEvaluation.Id }, newEvaluation);
     }

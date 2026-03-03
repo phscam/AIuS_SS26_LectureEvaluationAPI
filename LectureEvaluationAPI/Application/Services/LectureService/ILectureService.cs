@@ -9,4 +9,6 @@ public interface ILectureService
     Task<LectureResponse?> FindByIdAsync(int id);
 
     Task<LectureResponse?> UpdateAsync(int id, UpdateLectureRequest request);
+
+    Task<EvaluationResponse?> CreateEvaluationForLectureId(int id, CreateEvaluationRequest request);
 }

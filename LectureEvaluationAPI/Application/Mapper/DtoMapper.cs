@@ -15,4 +15,14 @@ public class DtoMapper
             LecturerName = lecture.LecturerName
         };
     }
+
+    public EvaluationResponse ToEvaluationResponse(Evaluation evaluation)
+    {
+        return new EvaluationResponse()
+        {
+            Id = evaluation.Id,
+            ImprovementCritic = evaluation.ImprovementCritic,
+            PositiveCritic = evaluation.PositiveCritic,
+        };
+    }
 }

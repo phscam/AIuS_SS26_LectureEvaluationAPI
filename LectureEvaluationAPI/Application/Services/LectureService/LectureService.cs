@@ -9,11 +9,13 @@ namespace LectureEvaluationAPI.Application.Services.LectureService;
 public class LectureService : ILectureService
 {
     private ILectureRepository _lectureRepository;
+    private IEvaluationRepository _evaluationRepository;
     private DtoMapper _mapper;
 
-    public LectureService(ILectureRepository lectureRepository, DtoMapper mapper)
+    public LectureService(ILectureRepository lectureRepository, IEvaluationRepository evaluationRepository, DtoMapper mapper)
     {
         _lectureRepository = lectureRepository;
+        _evaluationRepository = evaluationRepository;
         _mapper = mapper;
     }
     
@@ -58,5 +60,24 @@ public class LectureService : ILectureService
         await _lectureRepository.UpdateAsync(existingLecture);
         
         return _mapper.ToLectureResponse(existingLecture);
+    }
+
+    public async Task<EvaluationResponse?> CreateEvaluationForLectureId(int id, CreateEvaluationRequest request)
+    {
+       var lecture = await _lectureRepository.FindByIdAsync(id);
+       
+       if (lecture == null)
+           return null;
+
+       var evaluation = new Evaluation()
+       {
+           PositiveCritic = request.PositiveCritic,
+           ImprovementCritic = request.ImprovementCritic,
+           LectureId = id
+       };
+       
+       await _evaluationRepository.AddAsync(evaluation);
+
+       return _mapper.ToEvaluationResponse(evaluation);
     }
 }
